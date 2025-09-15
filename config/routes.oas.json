@@ -1,0 +1,42 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "My Zuplo API"
+  },
+  "paths": {
+    "/websocket-pipeline": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "test summary",
+        "description": "Lorem ipsum",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "webSocketPipelineHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "https://lone-wolf-1.herokuapp.com/websocket",
+              "policies": {
+                "inbound": [
+                   {
+                    "export": "inboundFirewallPolicy",
+                    "module": "$import(./modules/ws-inbound-firewall)"
+                  }
+                ],
+                "outbound": [
+                ]
+              }
+            }
+          },
+          "policies": {
+            "inbound": []
+          }
+        },
+        "operationId": "fads98767sdk-sd7678-8889"
+      }
+    }
+  }
+}
