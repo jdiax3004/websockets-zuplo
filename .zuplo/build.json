@@ -1,0 +1,19 @@
+{
+  "BUILD_ID": "bb7cb2ad-edc0-4510-9704-9fe457b759db",
+  "TIMESTAMP": "2025-09-25T12:39:55.211Z",
+  "BUILD_ENV": "production",
+  "ZUPLO_VERSION": "6.60.26",
+  "COMPATIBILITY_DATE": "2025-02-06",
+  "ACCOUNT_NAME": "zuplo-poc",
+  "PROJECT_NAME": "websockets-akamai-fai",
+  "ENVIRONMENT_TYPE": "WORKING_COPY",
+  "IS_LOCAL_DEVELOPMENT": false,
+  "COMPATIBILITY_FLAGS": {
+    "runOutboundPoliciesOnHandlerOnAllStatuses": true,
+    "doNotRunHooksOnSystemRoutes": true,
+    "removeAllVendorHeadersExceptListed": true,
+    "allowCustomPorts": true,
+    "removeLegacyLogInitialization": true,
+    "useForwardRedirectsPropOnUrlForwardHandler": true
+  }
+}
