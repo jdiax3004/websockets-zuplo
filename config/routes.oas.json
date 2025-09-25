@@ -21,12 +21,16 @@
               "rewritePattern": "https://lone-wolf-1.herokuapp.com/websocket",
               "policies": {
                 "inbound": [
-                   {
+                  {
                     "export": "inboundFirewallPolicy",
                     "module": "$import(./modules/ws-inbound-firewall)"
                   }
                 ],
                 "outbound": [
+                  {
+                    "export": "outboundFirewallPolicy",
+                    "module": "$import(./modules/ws-inbound-firewall)"
+                  }
                 ]
               }
             }
@@ -35,7 +39,7 @@
             "inbound": []
           }
         },
-        "operationId": "fads98767sdk-sd7678-8889"
+        "operationId": "fads98767sdsdfk-sd7678-8889"
       }
     }
   }
