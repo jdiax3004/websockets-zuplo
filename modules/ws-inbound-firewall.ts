@@ -1,54 +1,71 @@
 import { environment, ZuploContext, ZuploRequest } from "@zuplo/runtime";
 
 interface TriggeredRule {
-  "ruleId": string
-  "version": string
-  "tags": string[]
-  "message": string
-  "category": string
-  "riskScore": number
-  "details": {
-    "maskedInput": string
-  },
-  "action": "deny" | "warn"
-  "selector": string
+  ruleId: string;
+  version: string;
+  tags: string[];
+  message: string;
+  category: string;
+  riskScore: number;
+  details: { maskedInput: string };
+  action: "deny" | "alert";
+  selector: string;
 }
 
 interface AIFirewallResponse {
-  "overallRiskScore": number
-  "rulesTriggered": TriggeredRule[],
-  "userApplicationId": string,
-  "clientRequestId": string
+  overallRiskScore: number;
+  rulesTriggered: TriggeredRule[];
+  userApplicationId: string;
+  clientRequestId: string;
 }
 
-async function checkFirewallForAi(data: string, context: ZuploContext) {
+type DetectMode = "input" | "output";
 
-  const aiFirewallResponse = await fetch(`https://aisec.akamai.com/fai/v1/fai-configurations/${environment.AI_FIREWALL_CONFIG_ID}/detect`, {
+async function detectWithAiFirewall(
+  data: string,
+  context: ZuploContext,
+  mode: DetectMode
+): Promise<AIFirewallResponse> {
+  const payload =
+    mode === "input"
+      ? { clientRequestId: crypto.randomUUID(), llmInput: data }
+      : { clientRequestId: crypto.randomUUID(), llmOutput: data };
+
+  const url = `https://aisec.akamai.com/fai/v1/fai-configurations/${environment.AI_FIREWALL_CONFIG_ID}/detect`;
+
+  const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Fai-Api-Key": environment.AI_FIREWALL_KEY
+      "Fai-Api-Key": environment.AI_FIREWALL_KEY,
     },
-    body: JSON.stringify({
-      "clientRequestId": crypto.randomUUID(),
-      "llmInput": data
-    })
-  })
-
-  const responseText = await aiFirewallResponse.text();
-  context.log.debug({
-    status: aiFirewallResponse.status,
-    statusText: aiFirewallResponse.statusText,
-    body: responseText
+    body: JSON.stringify(payload),
   });
 
-  if (aiFirewallResponse.status !== 200) {
-    throw new Error(`AI Firewall request failed. Status: ${aiFirewallResponse.status}, status text: ${aiFirewallResponse.statusText}`);
+  const text = await res.text();
+
+  // Debug
+  context.log.debug({
+    detectMode: mode,
+    url,
+    status: res.status,
+    statusText: res.statusText,
+    responseBody: text,
+  });
+
+  if (!res.ok) {
+    throw new Error(
+      `FAI detect failed (${mode}). HTTP ${res.status} ${res.statusText} — ${text?.slice(0, 500)}`
+    );
   }
 
-  const response: AIFirewallResponse = JSON.parse(responseText) as AIFirewallResponse;
+  return JSON.parse(text) as AIFirewallResponse;
+}
 
-  return response;
+function mustBeString(data: any): string {
+  if (typeof data === "string") return data;
+  if (data instanceof Uint8Array) return new TextDecoder().decode(data);
+  return String(data);
 }
 
 export async function inboundFirewallPolicy(
@@ -58,26 +75,20 @@ export async function inboundFirewallPolicy(
   request: ZuploRequest,
   context: ZuploContext
 ) {
-
   try {
-    const result = await checkFirewallForAi(data, context);
+    const s = mustBeString(data);
+    const result = await detectWithAiFirewall(s, context, "input");
 
-    const shouldDeny = result.rulesTriggered.filter(rule => rule.action === "deny");
+    const denies = result.rulesTriggered.filter(r => r.action === "deny");
+    if (denies.length === 0) return data;
 
-    if (shouldDeny.length === 0) {
-      return data;
-    }
-
-    source.send(`AI Firewall has denied forwarding this incoming message. ${shouldDeny[0].message} (Rule: ${shouldDeny[0].ruleId})`);
-    // you could also send something to the source (origin) here if you like
-    // returning undefined here stops the message sequence for this message
+    source.send(
+      `Firewall for AI denied inbound message: ${denies[0].message} (Rule: ${denies[0].ruleId})`
+    );
     return;
+  } catch (err) {
+    context.log.error({ err, phase: "inbound" });
   }
-  catch (err) {
-    context.log.error(err);
-  }
-
-  // in case of error, just go ahead
   return data;
 }
 
@@ -88,28 +99,19 @@ export async function outboundFirewallPolicy(
   request: ZuploRequest,
   context: ZuploContext
 ) {
-
-  // to test outbound interception you can 
-  // data = "532-90-8976"
-
   try {
-    const result = await checkFirewallForAi(data, context);
+    const s = mustBeString(data);
+    const result = await detectWithAiFirewall(s, context, "output");
 
-    const shouldDeny = result.rulesTriggered.filter(rule => rule.action === "deny");
+    const denies = result.rulesTriggered.filter(r => r.action === "deny");
+    if (denies.length === 0) return data;
 
-    if (shouldDeny.length === 0) {
-      return data;
-    }
-
-    target.send(`AI Firewall has denied forwarding the outgoing message. ${shouldDeny[0].message} (Rule: ${shouldDeny[0].ruleId})`);
-    // you could also send something to the source (origin) here if you like
-    // returning undefined here stops the message sequence for this message
+    target.send(
+      `Firewall for AI denied outbound message: ${denies[0].message} (Rule: ${denies[0].ruleId})`
+    );
     return;
+  } catch (err) {
+    context.log.error({ err, phase: "outbound" });
   }
-  catch (err) {
-    context.log.error(err);
-  }
-
-  // in case of error, don't block
-  return data;
+  return data; 
 }
