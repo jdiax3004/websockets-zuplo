@@ -1,11 +1,11 @@
 {
-  "BUILD_ID": "bb7cb2ad-edc0-4510-9704-9fe457b759db",
-  "TIMESTAMP": "2025-09-25T12:39:55.211Z",
+  "BUILD_ID": "9633e69a-ce7d-4db1-a70b-184fe7bbb850",
+  "TIMESTAMP": "2025-10-01T17:18:11.834Z",
   "BUILD_ENV": "production",
-  "ZUPLO_VERSION": "6.60.26",
+  "ZUPLO_VERSION": "6.60.33",
   "COMPATIBILITY_DATE": "2025-02-06",
-  "ACCOUNT_NAME": "zuplo-poc",
-  "PROJECT_NAME": "websockets-akamai-fai",
+  "ACCOUNT_NAME": "rose_proper_loon",
+  "PROJECT_NAME": "websockets-zuplo-gtw",
   "ENVIRONMENT_TYPE": "WORKING_COPY",
   "IS_LOCAL_DEVELOPMENT": false,
   "COMPATIBILITY_FLAGS": {

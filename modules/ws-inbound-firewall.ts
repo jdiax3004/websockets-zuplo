@@ -23,7 +23,7 @@ interface AIFirewallResponse {
 
 async function checkFirewallForAi(data: string, context: ZuploContext) {
 
-  const aiFirewallResponse = await fetch('https://aisec.akamai.com/fai/v1/fai-configurations/1129/detect', {
+  const aiFirewallResponse = await fetch(`https://aisec.akamai.com/fai/v1/fai-configurations/${environment.AI_FIREWALL_CONFIG_ID}/detect`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
