@@ -5,12 +5,12 @@
     "title": "My Zuplo API"
   },
   "paths": {
-    "/websocket-pipeline": {
+    "/ws-echo": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
       "get": {
-        "summary": "test summary",
+        "summary": "Web Socket Test",
         "description": "Lorem ipsum",
         "x-zuplo-route": {
           "corsPolicy": "none",
@@ -34,12 +34,48 @@
                 ]
               }
             }
-          },
-          "policies": {
-            "inbound": []
           }
         },
         "operationId": "fads98767sdsdfk-sd7678-8889"
+      }
+    },
+    "/ws-openai": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "OpenAI Realtime WebSocket",
+        "description": "Tunnel to OpenAI Realtime API",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "webSocketPipelineHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "wss://api.openai.com/v1/realtime?model=${env.OPENAI_REALTIME_MODEL}",
+              "policies": {
+                "inbound": [
+                  {
+                    "export": "inboundFirewallPolicy",
+                    "module": "$import(./modules/ws-inbound-firewall)"
+                  }
+                ],
+                "outbound": [
+                  {
+                    "export": "outboundFirewallPolicy",
+                    "module": "$import(./modules/ws-inbound-firewall)"
+                  }
+                ]
+              }
+            }
+          },
+          "policies": {
+            "inbound": [
+              "set-headers-inbound"
+            ]
+          }
+        },
+        "operationId": "openai-realtime-route"
       }
     }
   }
