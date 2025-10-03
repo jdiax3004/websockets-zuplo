@@ -5,7 +5,7 @@
     "title": "My Zuplo API"
   },
   "paths": {
-    "/ws-echo": {
+    "/ws/echo": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
@@ -39,7 +39,7 @@
         "operationId": "fads98767sdsdfk-sd7678-8889"
       }
     },
-    "/ws-openai": {
+    "/ws/openai": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
