@@ -18,7 +18,7 @@
             "export": "webSocketPipelineHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "https://lone-wolf-1.herokuapp.com/websocket",
+              "rewritePattern": "wss://lone-wolf-1.herokuapp.com/websocket",
               "policies": {
                 "inbound": [
                   {
@@ -91,7 +91,7 @@
             "export": "webSocketPipelineHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "https://www.julian-labs.com/websocket",
+              "rewritePattern": "wss://www.julian-labs.com/websocket",
               "policies": {
                 "inbound": [
                   {
