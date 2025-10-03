@@ -18,7 +18,7 @@
             "export": "webSocketPipelineHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "https://lone-wolf-1.herokuapp.com/websocket",
+              "rewritePattern": "https://www.julian-labs.com/websocket",
               "policies": {
                 "inbound": [
                   {
@@ -36,7 +36,7 @@
             }
           }
         },
-        "operationId": "fads98767sdsdfk-sd7678-8889"
+        "operationId": "91f50fa7-c8ce-4c21-986a-afeedf9abb6d"
       }
     },
     "/ws/openai": {
@@ -76,6 +76,40 @@
           }
         },
         "operationId": "openai-realtime-route"
+      }
+    },
+    "/ws/akamai": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "Web Socket Test",
+        "description": "Lorem ipsum",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "webSocketPipelineHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "https://lone-wolf-1.herokuapp.com/websocket",
+              "policies": {
+                "inbound": [
+                  {
+                    "export": "inboundFirewallPolicy",
+                    "module": "$import(./modules/ws-inbound-firewall)"
+                  }
+                ],
+                "outbound": [
+                  {
+                    "export": "outboundFirewallPolicy",
+                    "module": "$import(./modules/ws-inbound-firewall)"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "fads98767sdsdfk-sd7678-8889"
       }
     }
   }
