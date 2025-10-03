@@ -1,8 +1,8 @@
 {
-  "BUILD_ID": "655eb4fe-5ef1-40e4-bfba-293d23921568",
-  "TIMESTAMP": "2025-10-01T20:56:39.750Z",
+  "BUILD_ID": "a3efd855-4c0a-4b6c-ba5b-84efea186fbe",
+  "TIMESTAMP": "2025-10-03T19:29:45.801Z",
   "BUILD_ENV": "production",
-  "ZUPLO_VERSION": "6.60.33",
+  "ZUPLO_VERSION": "6.61.4",
   "COMPATIBILITY_DATE": "2025-02-06",
   "ACCOUNT_NAME": "rose_proper_loon",
   "PROJECT_NAME": "websockets-zuplo-gtw",
